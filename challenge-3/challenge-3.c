@@ -1,21 +1,44 @@
+#include <stdlib.h>
+
+
 #include "challenge-3.h"
+
+enum cmds {
+    LIST = 1,
+    ADD = 2,
+    DELETE = 3,
+    SAVE = 4,
+    OPEN = 5,
+    QUIT = 6,
+} cmds;
 
 /**
  * Input function. 
- * Reads a string from the standard input (stdin)
- * Returns it swapping \n to \0
+ * Reads and parses a string from the standard input (stdin).
+ * Replaces last \n for \0 to NULL terminate string.
  */
-char *input_1(){
-    char *c = (char*)malloc(sizeof(char) * SIZE );
-    int read;
-    fgets(c, SIZE, stdin); 
-    for (int i = 0; i < strlen(c); i ++){
-        if (c[i] == '\n'){
-            c[i] = '\0';
+void get_string_input(char **b){
+    static char buffer[SIZE];
+    char *r;
+    buffer[0]='\0';
+
+    r = fgets(buffer, SIZE, stdin);
+
+    if (r == NULL){
+        fprintf(stderr, "\tInput error\n");
+        return;
+    }
+
+    int csize = 0;
+    for (int i = 0; i < SIZE; i++){
+        if (buffer[i] == '\n'){
+            buffer[i] = '\0';
+            csize = i;
             break;
         }
     }
-    return c;
+    *b = (char *) malloc(sizeof(char) * csize);
+    strcpy(*b, buffer);
 }
 
 /**
@@ -23,16 +46,53 @@ char *input_1(){
  */
 void solution_1(){
     printf("Solution 1\n");
+
+    char *data;
+    char *res = "";
+
+    char *cmd;
+
+    do{
+        printf("Enter command: ");
+        get_string_input(&cmd);
+        switch (atoi(cmd)) {
+            case ADD:
+                res = "ADD";
+                get_data("NAME", &data);
+                print_data("NAME", data);
+                get_data("RELATIONSHIP", &data);
+                print_data("RELATIONSHIP", data);
+                break;
+            case DELETE:
+                res = "DELETE";
+                break;
+            case LIST:
+                res = "LIST";
+                break;
+            case SAVE:
+                res = "SAVE";
+                break;
+            case OPEN:
+                res = "OPEN";
+                break;
+            case QUIT:
+                res = "QUIT";
+                break;
+            default :
+                res = "ERROR";
+                break;
+        }
+        printf("You have selected command--> %s \n", res);
+    }while(atoi(cmd) != QUIT);
+
+    printf("Thank you for coming by :)");
 }
 
+void get_data(char *name, char **data){
+    printf("Introduce %s: ", name);
+    get_string_input(data);
+}
 
-void loop( void (*s)() , char* (*i)()){
-    printf("Hello world!");
-    printf("solution %p\n", s);
-    printf("input %p\n", i);
-
-    s();
-    char * test = i();
-    printf("Test %s\n", test);
-    free(test);
+void print_data(char *name, char *data){
+    printf("The data for %s is %s\n", name, data);
 }

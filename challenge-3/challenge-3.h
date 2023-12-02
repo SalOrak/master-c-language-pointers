@@ -13,6 +13,8 @@ struct family {
 };
 
 
-void loop( void (*s)(), char* (*i)());
 void solution_1();
-char *input_1();
+
+void get_string_input(char **b);
+void get_data(char *name, char **data);
+void print_data(char *name, char *data);
